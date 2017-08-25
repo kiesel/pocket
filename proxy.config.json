@@ -1,0 +1,6 @@
+{
+  "/v3": {
+         "target": "https://getpocket.com/",
+         "secure":false
+      }
+}
