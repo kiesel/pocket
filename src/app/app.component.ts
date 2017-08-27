@@ -8,7 +8,7 @@ import { RestService } from './rest.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'PockPockPock';
+  title = 'My reading list';
 
   constructor() {}
 }
