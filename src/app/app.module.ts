@@ -7,10 +7,12 @@ import { AuthGuard } from './auth.guard';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './auth.service';
 import { RestService } from './rest.service';
+import { ArticleListComponent } from './article-list/article-list.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ArticleListComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,11 @@
+<div *ngIf="unreadArticles()">
+  <ul>
+    <li *ngFor="let article of unreadArticles()">
+      <strong><a [href]="article.resolved_url" target="pocketViewer">{{ article.resolved_title }}</a></strong>
+      <p>{{ article.excerpt }}</p>
+      <br/>
+      {{ article | json }}</li>
+  </ul>
+</div>
+
+<div *ngIf="!unreadArticles()">Loading articles from Pocket ...</div>

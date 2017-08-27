@@ -12,7 +12,11 @@ export class AuthService {
   constructor(
     private restService: RestService,
   ) {
-    this.consumeAuthentication();
+    if (this.getAccessToken()) {
+      this.restService.setAccessToken(this.getAccessToken());
+    } else {
+      this.consumeAuthentication();
+    }
   }
 
   public isAuthenticated(): boolean {
@@ -50,7 +54,6 @@ export class AuthService {
 
   public consumeAuthentication() {
     if (!this.getRequestToken() && this.getAccessToken()) {
-      console.log('requestToken= %o accessToken= %o', this.getRequestToken(), this.getAccessToken());
       return ;
     }
 
@@ -58,9 +61,9 @@ export class AuthService {
       .subscribe(res => {
         console.log('Received accessToken %o', res);
 
+        this.username = res.username;
         this.storeAccessToken(res.access_token);
         this.clearRequestToken();
-        this.username = res.username;
       })
     ;
   }
@@ -68,33 +71,44 @@ export class AuthService {
 
   private storeRequestToken(token: string) {
     this.requestToken = token;
-    sessionStorage.setItem('pocket_requestToken', this.requestToken);
+    this.persist();
   }
 
   private getRequestToken(): string {
-    if (!this.requestToken) {
-      this.requestToken = sessionStorage.getItem('pocket_requestToken');
-    }
-
+    this.materialize();
     return this.requestToken;
   }
 
   private clearRequestToken() {
     this.requestToken = null;
-    sessionStorage.removeItem('pocket_requestToken');
+    this.persist();
   }
 
   private storeAccessToken(token: string) {
     this.accessToken = token;
-    sessionStorage.setItem('pocket_accessToken', this.accessToken);
+    this.persist();
   }
 
   private getAccessToken(): string {
-    if (!this.accessToken) {
-      this.accessToken = sessionStorage.getItem('pocket_accesstoken');
-    }
-
+    this.materialize();
     return this.accessToken;
+  }
+
+  private persist() {
+    sessionStorage.setItem('pocket_auth', JSON.stringify({
+      'request_token': this.requestToken,
+      'access_token': this.accessToken,
+      'username': this.username,
+    }));
+  }
+
+  private materialize() {
+    let data = JSON.parse(sessionStorage.getItem('pocket_auth'));
+    if (data) {
+      this.accessToken = data.access_token;
+      this.requestToken = data.request_token;
+      this.username = data.username;
+    }
   }
 
   private redirectToPocket() {
